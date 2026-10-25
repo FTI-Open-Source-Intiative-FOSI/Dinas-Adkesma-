@@ -1,0 +1,41 @@
+<aside class="w-64 fixed inset-y-0 left-0 border-r border-white/10 bg-white/5 backdrop-blur-md z-50 flex flex-col">
+  <!-- Logo -->
+  <div class="h-16 flex items-center gap-2 px-6 border-b border-white/10">
+    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+      <i class="fas fa-bullhorn text-white text-sm"></i>
+    </div>
+    <span class="text-lg font-bold text-white">Lapor<span class="text-indigo-400">Mahasiswa</span></span>
+  </div>
+
+  <!-- Menu -->
+  <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 px-4 mb-3">Menu Utama</p>
+
+    <a href="/admin/dashboard" class="sidebar-link <%= currentPath === '/admin/dashboard' ? 'active' : '' %>">
+      <i class="fas fa-tachometer-alt w-5 text-center"></i>
+      Dashboard
+    </a>
+
+    <a href="/admin/reports" class="sidebar-link <%= currentPath.startsWith('/admin/reports') ? 'active' : '' %>">
+      <i class="fas fa-file-alt w-5 text-center"></i>
+      Laporan
+    </a>
+
+    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 px-4 mb-3 mt-6">Kelola</p>
+
+    <a href="/admin/categories" class="sidebar-link <%= currentPath.startsWith('/admin/categories') ? 'active' : '' %>">
+      <i class="fas fa-tags w-5 text-center"></i>
+      Kategori
+    </a>
+
+    <a href="/admin/faqs" class="sidebar-link <%= currentPath.startsWith('/admin/faqs') ? 'active' : '' %>">
+      <i class="fas fa-question-circle w-5 text-center"></i>
+      FAQ
+    </a>
+
+    <a href="/admin/users" class="sidebar-link <%= currentPath.startsWith('/admin/users') ? 'active' : '' %>">
+      <i class="fas fa-users w-5 text-center"></i>
+      Pengguna
+    </a>
+  </nav>
+</aside>

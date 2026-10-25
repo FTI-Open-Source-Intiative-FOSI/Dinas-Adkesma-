@@ -1,0 +1,121 @@
+<div class="animate-fadeIn space-y-6">
+    <!-- Form tambah FAQ -->
+    <div class="glass-card">
+        <h2 class="text-lg font-semibold text-white mb-4">
+            <i class="fas fa-plus-circle mr-2 text-slate-400"></i> Tambah FAQ
+        </h2>
+        <form method="POST" action="/admin/faqs" class="grid gap-4 md:grid-cols-4">
+            <div class="md:col-span-3">
+                <label class="form-label" for="faq-q">Pertanyaan</label>
+                <input type="text" id="faq-q" name="question" class="form-input" maxlength="255" required>
+            </div>
+            <div>
+                <label class="form-label" for="faq-order">Urutan</label>
+                <input type="number" id="faq-order" name="sort_order" class="form-input" min="0" value="0">
+            </div>
+            <div class="md:col-span-4">
+                <label class="form-label" for="faq-a">Jawaban</label>
+                <textarea id="faq-a" name="answer" class="form-input" rows="3" required></textarea>
+            </div>
+            <div class="md:col-span-4">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Daftar FAQ -->
+    <div class="glass-card">
+        <h2 class="text-lg font-semibold text-white mb-4">
+            <i class="fas fa-question-circle mr-2 text-slate-400"></i> Daftar FAQ
+            <span class="text-sm font-normal text-slate-500 ml-2">(<%= faqs.length %> total)</span>
+        </h2>
+
+        <% if (faqs && faqs.length> 0) { %>
+            <div class="overflow-x-auto">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Urutan</th>
+                            <th>Pertanyaan</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% faqs.forEach(function(f) { %>
+                            <tr>
+                                <td class="text-center">
+                                    <input type="checkbox" id="edit-toggle-faq-<%= f.id %>" class="edit-toggle"
+                                        tabindex="-1">
+                                    <%= f.sort_order %>
+                                </td>
+                                <td class="font-medium text-white max-w-[420px] truncate">
+                                    <%= f.question %>
+                                </td>
+                                <td>
+                                    <% if (f.is_active) { %>
+                                        <span class="badge badge-selesai">Aktif</span>
+                                        <% } else { %>
+                                            <span class="badge badge-ditolak">Nonaktif</span>
+                                            <% } %>
+                                </td>
+                                <td class="whitespace-nowrap">
+                                    <label for="edit-toggle-faq-<%= f.id %>" class="btn btn-secondary btn-sm">
+                                        <i class="fas fa-pen"></i> Edit
+                                    </label>
+                                    <form method="POST" action="/admin/faqs/<%= f.id %>/delete" class="inline"
+                                        data-confirm="Hapus FAQ ini?">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                            <!-- Form edit: tersembunyi, muncul saat tombol Edit diklik -->
+                            <tr class="edit-row">
+                                <td colspan="4">
+                                    <form method="POST" action="/admin/faqs/<%= f.id %>/edit"
+                                        class="grid gap-3 md:grid-cols-4 py-2">
+                                        <div class="md:col-span-3">
+                                            <label class="form-label">Pertanyaan</label>
+                                            <input type="text" name="question" class="form-input"
+                                                value="<%= f.question %>" maxlength="255" required>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Urutan</label>
+                                            <input type="number" name="sort_order" class="form-input" min="0"
+                                                value="<%= f.sort_order %>">
+                                        </div>
+                                        <div class="md:col-span-4">
+                                            <label class="form-label">Jawaban</label>
+                                            <textarea name="answer" class="form-input" rows="3"
+                                                required><%= f.answer %></textarea>
+                                        </div>
+                                        <label class="flex items-center gap-2 text-sm text-slate-300 md:col-span-4">
+                                            <input type="checkbox" name="is_active" class="accent-indigo-500"
+                                                <%=f.is_active ? 'checked' : '' %>>
+                                            Aktif (tampil di halaman publik)
+                                        </label>
+                                        <div class="md:col-span-4 flex gap-2">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-save"></i> Simpan perubahan
+                                            </button>
+                                            <label for="edit-toggle-faq-<%= f.id %>" class="btn btn-secondary btn-sm">
+                                                Batal
+                                            </label>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+            </div>
+            <% } else { %>
+                <p class="text-sm text-slate-400 text-center py-8">Belum ada FAQ. Tambahkan lewat form di atas.</p>
+                <% } %>
+    </div>
+</div>
+
+<script src="/js/confirm.js"></script>

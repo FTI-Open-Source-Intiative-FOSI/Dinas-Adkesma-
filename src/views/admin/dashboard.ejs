@@ -1,0 +1,123 @@
+<div class="animate-fadeIn">
+  <!-- Stat Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+    <div class="stat-card">
+      <div class="w-12 h-12 rounded-xl bg-indigo-600/20 flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-file-alt text-xl text-indigo-400"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-white">
+          <%= stats.total || 0 %>
+        </p>
+        <p class="text-xs text-slate-400">Total</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="w-12 h-12 rounded-xl bg-amber-600/20 flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-clock text-xl text-amber-400"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-white">
+          <%= stats.menunggu || 0 %>
+        </p>
+        <p class="text-xs text-slate-400">Menunggu</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-check-double text-xl text-blue-400"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-white">
+          <%= stats.diverifikasi || 0 %>
+        </p>
+        <p class="text-xs text-slate-400">Diverifikasi</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="w-12 h-12 rounded-xl bg-indigo-600/20 flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-spinner text-xl text-indigo-400"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-white">
+          <%= stats.diproses || 0 %>
+        </p>
+        <p class="text-xs text-slate-400">Diproses</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="w-12 h-12 rounded-xl bg-emerald-600/20 flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-check-circle text-xl text-emerald-400"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-white">
+          <%= stats.selesai || 0 %>
+        </p>
+        <p class="text-xs text-slate-400">Selesai</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="w-12 h-12 rounded-xl bg-red-600/20 flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-times-circle text-xl text-red-400"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-white">
+          <%= stats.ditolak || 0 %>
+        </p>
+        <p class="text-xs text-slate-400">Ditolak</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Reports -->
+  <div class="glass-card">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-white"><i class="fas fa-clock mr-2 text-slate-400"></i> Laporan Terbaru</h2>
+      <a href="/admin/reports" class="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">
+        Lihat Semua <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+    <% if (recentReports && recentReports.length> 0) { %>
+      <div class="overflow-x-auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tiket</th>
+              <th>Judul</th>
+              <th>Pelapor</th>
+              <th>Status</th>
+              <th>Tanggal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% recentReports.forEach(function(r) { %>
+              <tr>
+                <td><span class="font-mono text-indigo-400 text-xs">
+                    <%= r.ticket_code %>
+                  </span></td>
+                <td class="max-w-[200px] truncate">
+                  <%= r.title %>
+                </td>
+                <td>
+                  <%= r.reporter_name %>
+                </td>
+                <td><%- include('../partials/status-badge', { status: r.status }) %></td>
+                <td class="text-xs">
+                  <%= new Date(r.created_at).toLocaleDateString('id-ID', { day: 'numeric' , month: 'short' }) %>
+                </td>
+                <td>
+                  <a href="/admin/reports/<%= r.id %>" class="text-indigo-400 hover:text-indigo-300 text-xs">
+                    Detail <i class="fas fa-arrow-right"></i>
+                  </a>
+                </td>
+              </tr>
+              <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <% } else { %>
+        <p class="text-sm text-slate-400 text-center py-8">Belum ada laporan masuk.</p>
+        <% } %>
+  </div>
+</div>

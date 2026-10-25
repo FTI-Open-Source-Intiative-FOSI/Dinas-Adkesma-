@@ -1,0 +1,80 @@
+<div class="max-w-2xl mx-auto animate-fadeIn">
+  <div class="mb-8">
+    <a href="/student/reports" class="text-sm text-slate-400 hover:text-white transition-colors">
+      <i class="fas fa-arrow-left mr-1"></i> Kembali ke Riwayat
+    </a>
+    <h1 class="text-2xl font-bold text-white mt-3">Buat Laporan Baru</h1>
+    <p class="text-sm text-slate-400 mt-1">Isi formulir di bawah untuk mengirim laporan</p>
+  </div>
+
+  <div class="glass-card">
+    <form method="POST" action="/student/reports" enctype="multipart/form-data" class="space-y-5">
+      <div>
+        <label for="title" class="form-label">Judul Laporan <span class="text-red-400">*</span></label>
+        <input type="text" id="title" name="title" class="form-input" placeholder="Ringkasan singkat permasalahan"
+               value="<%= typeof old !== 'undefined' && old.title ? old.title : '' %>" required>
+      </div>
+
+      <div>
+        <label for="category_id" class="form-label">Kategori <span class="text-red-400">*</span></label>
+        <select id="category_id" name="category_id" class="form-select" required>
+          <option value="">— Pilih kategori —</option>
+          <% categories.forEach(function(cat) { %>
+            <option value="<%= cat.id %>" <%= (typeof old !== 'undefined' && old.category_id == cat.id) ? 'selected' : '' %>>
+              <%= cat.name %>
+            </option>
+          <% }); %>
+        </select>
+      </div>
+
+      <div>
+        <label for="description" class="form-label">Deskripsi Lengkap <span class="text-red-400">*</span></label>
+        <textarea id="description" name="description" class="form-input" rows="5"
+                  placeholder="Jelaskan kronologi dan detail permasalahan yang kamu alami" required><%= typeof old !== 'undefined' && old.description ? old.description : '' %></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="incident_date" class="form-label">Tanggal Kejadian <span class="text-red-400">*</span></label>
+          <input type="date" id="incident_date" name="incident_date" class="form-input"
+                 value="<%= typeof old !== 'undefined' && old.incident_date ? old.incident_date : '' %>" required>
+        </div>
+        <div>
+          <label for="incident_location" class="form-label">Lokasi Kejadian</label>
+          <input type="text" id="incident_location" name="incident_location" class="form-input"
+                 placeholder="Contoh: Gedung A Lt. 3"
+                 value="<%= typeof old !== 'undefined' && old.incident_location ? old.incident_location : '' %>">
+        </div>
+      </div>
+
+      <div>
+        <label for="reported_party" class="form-label">Pihak yang Dilaporkan</label>
+        <input type="text" id="reported_party" name="reported_party" class="form-input"
+               placeholder="Nama atau jabatan (opsional)"
+               value="<%= typeof old !== 'undefined' && old.reported_party ? old.reported_party : '' %>">
+      </div>
+
+      <div>
+        <label class="form-label">Lampiran Bukti (Opsional)</label>
+        <div class="border-2 border-dashed border-white/10 rounded-xl p-6 text-center hover:border-indigo-500/30 transition-colors">
+          <i class="fas fa-cloud-upload-alt text-2xl text-slate-500 mb-2"></i>
+          <p class="text-sm text-slate-400 mb-2">Seret file ke sini atau</p>
+          <input type="file" name="attachments" multiple accept="image/*,.pdf,.doc,.docx"
+                 class="text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-600/20 file:text-indigo-300 hover:file:bg-indigo-600/30">
+          <p class="text-xs text-slate-600 mt-2">Maks. 3 file (JPG, PNG, PDF, DOCX) — maks. 5MB per file</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+        <input type="checkbox" id="is_anonymous" name="is_anonymous" class="w-4 h-4 rounded accent-indigo-600">
+        <label for="is_anonymous" class="text-sm text-amber-300">
+          <i class="fas fa-user-secret mr-1"></i> Kirim secara anonim (identitas tidak ditampilkan)
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full py-3 text-base">
+        <i class="fas fa-paper-plane"></i> Kirim Laporan
+      </button>
+    </form>
+  </div>
+</div>

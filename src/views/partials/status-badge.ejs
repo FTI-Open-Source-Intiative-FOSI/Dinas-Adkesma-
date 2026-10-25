@@ -1,0 +1,21 @@
+<%
+  const statusLabels = {
+    menunggu: 'Menunggu',
+    diverifikasi: 'Diverifikasi',
+    diproses: 'Diproses',
+    selesai: 'Selesai',
+    ditolak: 'Ditolak',
+  };
+  const statusIcons = {
+    menunggu: 'fa-clock',
+    diverifikasi: 'fa-check-double',
+    diproses: 'fa-spinner',
+    selesai: 'fa-check-circle',
+    ditolak: 'fa-times-circle',
+  };
+  const badgeStatus = typeof status !== 'undefined' ? status : '';
+%>
+<span class="badge badge-<%= badgeStatus %>">
+  <i class="fas <%= statusIcons[badgeStatus] || 'fa-circle' %> text-[10px]"></i>
+  <%= statusLabels[badgeStatus] || badgeStatus %>
+</span>

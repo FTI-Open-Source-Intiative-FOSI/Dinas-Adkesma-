@@ -1,0 +1,25 @@
+<div class="max-w-2xl mx-auto py-8 animate-fadeIn">
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold text-white mb-3">Pertanyaan yang Sering Diajukan</h1>
+    <p class="text-slate-400">Temukan jawaban atas pertanyaan umum seputar sistem pengaduan</p>
+  </div>
+
+  <% if (faqs && faqs.length > 0) { %>
+    <div class="space-y-3">
+      <% faqs.forEach(function(faq, i) { %>
+        <details class="faq-item glass-card" style="animation: fadeIn 0.5s ease-out both; animation-delay: <%= i * 0.08 %>s;">
+          <summary>
+            <span class="pr-4"><%= faq.question %></span>
+            <i class="fas fa-chevron-down text-xs text-slate-400 transition-transform flex-shrink-0"></i>
+          </summary>
+          <div class="faq-answer"><%= faq.answer %></div>
+        </details>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div class="glass-card text-center py-12">
+      <i class="fas fa-question-circle text-4xl text-slate-600 mb-4"></i>
+      <p class="text-slate-400">Belum ada FAQ yang tersedia saat ini.</p>
+    </div>
+  <% } %>
+</div>

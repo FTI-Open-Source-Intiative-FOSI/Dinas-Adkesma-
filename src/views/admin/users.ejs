@@ -1,0 +1,135 @@
+<div class="animate-fadeIn space-y-6">
+    <!-- Pencarian -->
+    <div class="glass-card">
+        <form method="GET" action="/admin/users" class="flex flex-wrap gap-3 items-end">
+            <div class="flex-1 min-w-[200px]">
+                <label class="form-label">Cari</label>
+                <input type="text" name="search" class="form-input" placeholder="Nama, email, atau NIM..."
+                    value="<%= search %>">
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Cari</button>
+            <a href="/admin/users" class="btn btn-secondary btn-sm">Reset</a>
+        </form>
+    </div>
+
+    <!-- Daftar pengguna -->
+    <div class="glass-card">
+        <h2 class="text-lg font-semibold text-white mb-4">
+            <i class="fas fa-users mr-2 text-slate-400"></i> Daftar Pengguna
+            <span class="text-sm font-normal text-slate-500 ml-2">(<%= total %> total)</span>
+        </h2>
+
+        <% if (users && users.length> 0) { %>
+            <div class="overflow-x-auto">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>NIM</th>
+                            <th>Email</th>
+                            <th>Prodi</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Terdaftar</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(function(u) { %>
+                            <tr>
+                                <td class="font-medium text-white">
+                                    <%= u.name %>
+                                </td>
+                                <td class="text-xs">
+                                    <%= u.nim || '-' %>
+                                </td>
+                                <td class="text-xs">
+                                    <%= u.email %>
+                                </td>
+                                <td class="text-xs">
+                                    <%= u.prodi || '-' %>
+                                </td>
+                                <td>
+                                    <% if (u.role==='admin' ) { %>
+                                        <span class="badge badge-diproses">Admin</span>
+                                        <% } else { %>
+                                            <span class="badge badge-diverifikasi">Mahasiswa</span>
+                                            <% } %>
+                                </td>
+                                <td>
+                                    <% if (u.is_active) { %>
+                                        <span class="badge badge-selesai">Aktif</span>
+                                        <% } else { %>
+                                            <span class="badge badge-ditolak">Nonaktif</span>
+                                            <% } %>
+                                </td>
+                                <td class="text-xs whitespace-nowrap">
+                                    <%= new Date(u.created_at).toLocaleDateString('id-ID', { day: 'numeric' ,
+                                        month: 'short' , year: 'numeric' }) %>
+                                </td>
+                                <td>
+                                    <% if (currentUser && currentUser.id===u.id) { %>
+                                        <span class="text-xs text-slate-500">Akun kamu</span>
+                                        <% } else { %>
+                                            <% const aksi=u.is_active ? 'Nonaktifkan' : 'Aktifkan' ; %>
+                                                <form method="POST" action="/admin/users/<%= u.id %>/toggle-active"
+                                                    data-confirm="<%= aksi %> akun ini?">
+                                                    <button type="submit"
+                                                        class="btn btn-sm <%= u.is_active ? 'btn-warning' : 'btn-success' %>">
+                                                        <i
+                                                            class="fas <%= u.is_active ? 'fa-user-slash' : 'fa-user-check' %>"></i>
+                                                        <%= aksi %>
+                                                    </button>
+                                                </form>
+                                                <% } %>
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginasi -->
+            <% if (totalPages> 1) { %>
+                <div class="flex justify-center mt-6">
+                    <div class="pagination">
+                        <% if (page> 1) { %>
+                            <a href="/admin/users?page=<%= page - 1 %>&search=<%= encodeURIComponent(search) %>">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                            <% } %>
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <% if (i===page) { %>
+                                        <span class="active">
+                                            <%= i %>
+                                        </span>
+                                        <% } else { %>
+                                            <a
+                                                href="/admin/users?page=<%= i %>&search=<%= encodeURIComponent(search) %>">
+                                                <%= i %>
+                                            </a>
+                                            <% } %>
+                                                <% } %>
+                                                    <% if (page < totalPages) { %>
+                                                        <a
+                                                            href="/admin/users?page=<%= page + 1 %>&search=<%= encodeURIComponent(search) %>">
+                                                            <i class="fas fa-chevron-right"></i>
+                                                        </a>
+                                                        <% } %>
+                    </div>
+                </div>
+                <% } %>
+                    <% } else { %>
+                        <p class="text-sm text-slate-400 text-center py-8">Tidak ada pengguna yang ditemukan.</p>
+                        <% } %>
+    </div>
+</div>
+
+<script>
+    // Konfirmasi sebelum mengaktifkan / menonaktifkan akun
+    document.querySelectorAll('form[data-confirm]').forEach(function (form) {
+        form.addEventListener('submit', function (e) {
+            if (!confirm(form.dataset.confirm)) e.preventDefault();
+        });
+    });
+</script>

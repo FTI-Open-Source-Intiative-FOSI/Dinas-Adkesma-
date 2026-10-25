@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <%- include('../partials/head') %>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+      content="Sistem Pengaduan Mahasiswa - Laporkan masalah dengan mudah dan pantau progresnya secara transparan.">
+    <title>
+      <%= typeof title !=='undefined' ? title : 'Lapor Mahasiswa' %>
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+      body {
+        background: linear-gradient(135deg, #0f0e1a 0%, #1a1333 50%, #0f172a 100%);
+        min-height: 100vh;
+      }
+    </style>
+</head>
+
+<body class="antialiased">
+  <%- include('../partials/navbar') %>
+
+    <main class="min-h-[calc(100vh-140px)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <%- include('../partials/flash') %>
+          <%- body %>
+      </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+
+</html>

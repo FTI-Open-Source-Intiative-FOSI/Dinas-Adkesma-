@@ -1,0 +1,193 @@
+<div class="max-w-4xl mx-auto animate-fadeIn">
+  <div class="mb-6">
+    <a href="/admin/reports" class="text-sm text-slate-400 hover:text-white transition-colors">
+      <i class="fas fa-arrow-left mr-1"></i> Kembali ke Daftar Laporan
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Report Info -->
+      <div class="glass-card">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <span class="text-xs font-mono text-indigo-400 bg-indigo-600/20 px-2 py-0.5 rounded"><%= report.ticket_code %></span>
+            <h1 class="text-xl font-bold text-white mt-2"><%= report.title %></h1>
+          </div>
+          <%- include('../partials/status-badge', { status: report.status }) %>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+          <div>
+            <span class="text-slate-500 text-xs">Pelapor</span>
+            <p class="text-slate-300"><%= report.is_anonymous ? '(Anonim)' : report.reporter_name %></p>
+          </div>
+          <div>
+            <span class="text-slate-500 text-xs">NIM</span>
+            <p class="text-slate-300"><%= report.is_anonymous ? '-' : (report.nim || '-') %></p>
+          </div>
+          <div>
+            <span class="text-slate-500 text-xs">Kategori</span>
+            <p class="text-slate-300"><%= report.category_name %></p>
+          </div>
+          <div>
+            <span class="text-slate-500 text-xs">Tanggal Kejadian</span>
+            <p class="text-slate-300"><%= new Date(report.incident_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+          </div>
+          <% if (report.incident_location) { %>
+            <div>
+              <span class="text-slate-500 text-xs">Lokasi</span>
+              <p class="text-slate-300"><%= report.incident_location %></p>
+            </div>
+          <% } %>
+          <% if (report.reported_party) { %>
+            <div>
+              <span class="text-slate-500 text-xs">Pihak Dilaporkan</span>
+              <p class="text-slate-300"><%= report.reported_party %></p>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="border-t border-white/10 pt-4">
+          <h2 class="text-sm font-semibold text-slate-400 mb-2">Deskripsi</h2>
+          <p class="text-sm text-slate-300 whitespace-pre-line leading-relaxed"><%= report.description %></p>
+        </div>
+      </div>
+
+      <!-- Attachments -->
+      <% if (report.attachments && report.attachments.length > 0) { %>
+        <div class="glass-card">
+          <h2 class="text-base font-semibold text-white mb-4"><i class="fas fa-paperclip mr-2 text-slate-400"></i> Lampiran</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <% report.attachments.forEach(function(att) { %>
+              <a href="/uploads/<%= att.file_path %>" target="_blank"
+                 class="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
+                <div class="w-10 h-10 rounded-lg bg-indigo-600/20 flex items-center justify-center flex-shrink-0">
+                  <% if (att.mime_type.startsWith('image/')) { %>
+                    <i class="fas fa-image text-indigo-400"></i>
+                  <% } else { %>
+                    <i class="fas fa-file-alt text-indigo-400"></i>
+                  <% } %>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm text-white truncate group-hover:text-indigo-300"><%= att.original_name %></p>
+                  <p class="text-xs text-slate-500"><%= (att.file_size / 1024).toFixed(1) %> KB</p>
+                </div>
+                <i class="fas fa-download text-slate-600 group-hover:text-indigo-400"></i>
+              </a>
+            <% }); %>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Responses -->
+      <div class="glass-card">
+        <h2 class="text-base font-semibold text-white mb-4"><i class="fas fa-comment-dots mr-2 text-slate-400"></i> Tanggapan</h2>
+
+        <% if (report.responses && report.responses.length > 0) { %>
+          <div class="space-y-3 mb-6">
+            <% report.responses.forEach(function(resp) { %>
+              <div class="p-4 rounded-xl <%= resp.is_internal ? 'bg-amber-600/10 border border-amber-500/20' : 'bg-indigo-600/10 border border-indigo-500/20' %>">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="text-sm font-medium text-white"><%= resp.admin_name %></span>
+                  <% if (resp.is_internal) { %>
+                    <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full">Internal</span>
+                  <% } %>
+                  <span class="text-xs text-slate-500 ml-auto">
+                    <%= new Date(resp.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                  </span>
+                </div>
+                <p class="text-sm text-slate-300 whitespace-pre-line"><%= resp.message %></p>
+              </div>
+            <% }); %>
+          </div>
+        <% } else { %>
+          <p class="text-sm text-slate-500 mb-4">Belum ada tanggapan.</p>
+        <% } %>
+
+        <!-- Add response -->
+        <form method="POST" action="/admin/reports/<%= report.id %>/responses" class="space-y-3 border-t border-white/10 pt-4">
+          <textarea name="message" class="form-input" rows="3" placeholder="Tulis tanggapan..." required></textarea>
+          <div class="flex items-center justify-between">
+            <label class="flex items-center gap-2 text-sm text-slate-400">
+              <input type="checkbox" name="is_internal" class="accent-amber-500 w-4 h-4 rounded">
+              <i class="fas fa-lock text-xs"></i> Catatan internal (tidak terlihat pelapor)
+            </label>
+            <button type="submit" class="btn btn-primary btn-sm">
+              <i class="fas fa-paper-plane"></i> Kirim
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Sidebar Actions -->
+    <div class="space-y-6">
+      <!-- Status Update -->
+      <div class="glass-card">
+        <h2 class="text-base font-semibold text-white mb-4"><i class="fas fa-exchange-alt mr-2 text-slate-400"></i> Ubah Status</h2>
+        <form method="POST" action="/admin/reports/<%= report.id %>/status" class="space-y-3">
+          <select name="new_status" class="form-select" required>
+            <% statuses.forEach(function(s) { %>
+              <option value="<%= s %>" <%= report.status === s ? 'selected' : '' %>>
+                <%= s.charAt(0).toUpperCase() + s.slice(1) %>
+              </option>
+            <% }); %>
+          </select>
+          <input type="text" name="note" class="form-input" placeholder="Catatan (opsional)">
+          <button type="submit" class="btn btn-primary w-full">
+            <i class="fas fa-save"></i> Update Status
+          </button>
+        </form>
+      </div>
+
+      <!-- Status Timeline -->
+      <% if (report.statusLogs && report.statusLogs.length > 0) { %>
+        <div class="glass-card">
+          <h2 class="text-base font-semibold text-white mb-4"><i class="fas fa-history mr-2 text-slate-400"></i> Riwayat</h2>
+          <div class="ml-2">
+            <% report.statusLogs.forEach(function(log) { %>
+              <div class="timeline-item">
+                <div class="flex items-center gap-2 mb-1">
+                  <%- include('../partials/status-badge', { status: log.new_status }) %>
+                </div>
+                <p class="text-xs text-slate-500">
+                  <%= new Date(log.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) %>
+                </p>
+                <% if (log.note) { %>
+                  <p class="text-xs text-slate-400 mt-1"><%= log.note %></p>
+                <% } %>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Info -->
+      <div class="glass-card">
+        <h2 class="text-base font-semibold text-white mb-3"><i class="fas fa-info-circle mr-2 text-slate-400"></i> Info</h2>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-slate-500">Dibuat</span>
+            <span class="text-slate-300"><%= new Date(report.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">Diperbarui</span>
+            <span class="text-slate-300"><%= new Date(report.updated_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+          </div>
+          <% if (report.resolved_at) { %>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Diselesaikan</span>
+              <span class="text-emerald-300"><%= new Date(report.resolved_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+            </div>
+          <% } %>
+          <div class="flex justify-between">
+            <span class="text-slate-500">Anonim</span>
+            <span class="text-slate-300"><%= report.is_anonymous ? 'Ya' : 'Tidak' %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

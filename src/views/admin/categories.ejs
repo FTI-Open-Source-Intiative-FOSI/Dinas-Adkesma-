@@ -1,0 +1,179 @@
+<% var list=Array.isArray(categories) ? categories : []; %>
+
+    <div class="space-y-6">
+
+        <!-- Header -->
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h1 class="text-2xl font-bold text-white">Kelola Kategori</h1>
+                <p class="mt-1 text-sm text-slate-400">Tambah, edit, dan kelola kategori laporan mahasiswa.</p>
+            </div>
+            <span class="badge badge-diproses">
+                <i class="fas fa-tags"></i>
+                <%= list.length %> kategori
+            </span>
+        </div>
+
+        <!-- Form tambah kategori -->
+        <div class="glass-card">
+            <h2 class="mb-4 text-lg font-semibold text-white">
+                <i class="fas fa-plus-circle mr-2 text-indigo-400"></i>Tambah Kategori
+            </h2>
+
+            <form method="POST" action="/admin/categories" class="grid gap-4 md:grid-cols-2">
+                <div>
+                    <label for="cat-name" class="form-label">Nama Kategori</label>
+                    <input id="cat-name" type="text" name="name" required autocomplete="off" class="form-input"
+                        placeholder="Contoh: Akademik">
+                </div>
+
+                <div>
+                    <label for="cat-slug" class="form-label">Slug</label>
+                    <input id="cat-slug" type="text" name="slug" autocomplete="off" class="form-input"
+                        placeholder="Contoh: akademik">
+                    <p class="mt-1.5 text-xs text-slate-500">Dibuat otomatis dari nama, tapi bisa kamu ubah.</p>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label for="cat-description" class="form-label">Deskripsi</label>
+                    <textarea id="cat-description" name="description" rows="3" class="form-input"
+                        placeholder="Deskripsi singkat kategori"></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Tambah Kategori
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Daftar kategori -->
+        <div class="glass-card">
+            <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-white">
+                    <i class="fas fa-list mr-2 text-indigo-400"></i>Daftar Kategori
+                </h2>
+                <span class="text-sm text-slate-400">
+                    <%= list.length %> total
+                </span>
+            </div>
+
+            <% if (list.length> 0) { %>
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Slug</th>
+                                <th>Deskripsi</th>
+                                <th>Status</th>
+                                <th class="whitespace-nowrap">Aksi</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <% list.forEach(function(c, i) { %>
+                                <tr class="align-top">
+                                    <td class="text-slate-500">
+                                        <input type="checkbox" id="edit-toggle-<%= c.id %>" class="edit-toggle"
+                                            tabindex="-1">
+                                        <%= i + 1 %>
+                                    </td>
+
+                                    <td class="font-medium text-white">
+                                        <%= c.name %>
+                                    </td>
+
+                                    <td>
+                                        <code class="font-mono text-xs text-indigo-300"><%= c.slug %></code>
+                                    </td>
+
+                                    <td class="max-w-md text-slate-400">
+                                        <%= c.description || '-' %>
+                                    </td>
+
+                                    <td>
+                                        <% if (Number(c.is_active)===1) { %>
+                                            <span class="badge badge-aktif">Aktif</span>
+                                            <% } else { %>
+                                                <span class="badge badge-nonaktif">Nonaktif</span>
+                                                <% } %>
+                                    </td>
+
+                                    <td class="whitespace-nowrap">
+                                        <div class="flex items-center gap-2">
+                                            <label for="edit-toggle-<%= c.id %>" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-pen"></i> Edit
+                                            </label>
+
+                                            <form method="POST" action="/admin/categories/<%= c.id %>/delete"
+                                                class="inline" data-confirm="Yakin ingin menghapus kategori ini?">
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Form edit: tersembunyi, muncul saat tombol Edit diklik -->
+                                <tr class="edit-row">
+                                    <td colspan="6">
+                                        <form method="POST" action="/admin/categories/<%= c.id %>/edit"
+                                            class="glass-card-light grid gap-4 md:grid-cols-2">
+
+                                            <div>
+                                                <label class="form-label">Nama Kategori</label>
+                                                <input type="text" name="name" value="<%= c.name %>" required
+                                                    class="form-input">
+                                            </div>
+
+                                            <div>
+                                                <label class="form-label">Slug</label>
+                                                <input type="text" name="slug" value="<%= c.slug %>" required
+                                                    class="form-input">
+                                            </div>
+
+                                            <div class="md:col-span-2">
+                                                <label class="form-label">Deskripsi</label>
+                                                <textarea name="description" rows="3"
+                                                    class="form-input"><%= c.description || '' %></textarea>
+                                            </div>
+
+                                            <div class="md:col-span-2">
+                                                <label class="flex items-center gap-2 text-sm text-slate-300">
+                                                    <input type="checkbox" name="is_active" value="1"
+                                                        class="accent-indigo-500" <%=Number(c.is_active)===1 ? 'checked'
+                                                        : '' %>>
+                                                    Kategori aktif
+                                                </label>
+                                            </div>
+
+                                            <div class="flex flex-wrap gap-2 md:col-span-2">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-check"></i> Simpan Perubahan
+                                                </button>
+                                                <label for="edit-toggle-<%= c.id %>" class="btn btn-secondary">
+                                                    Batal
+                                                </label>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } else { %>
+                    <div class="py-12 text-center">
+                        <i class="fas fa-tags mb-3 text-3xl text-slate-600"></i>
+                        <p class="text-sm font-medium text-slate-300">Belum ada kategori</p>
+                        <p class="mt-1 text-sm text-slate-500">Tambahkan lewat form di atas.</p>
+                    </div>
+                    <% } %>
+        </div>
+    </div>
+
+    <script src="/js/admin-categories.js"></script>

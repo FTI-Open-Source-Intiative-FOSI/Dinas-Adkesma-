@@ -1,0 +1,71 @@
+<nav class="border-b border-white/10 bg-white/5 backdrop-blur-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2">
+        <div
+          class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+          <i class="fas fa-bullhorn text-white text-sm"></i>
+        </div>
+        <span class="text-lg font-bold text-white">Lapor<span class="text-indigo-400">Mahasiswa</span></span>
+      </a>
+
+      <div class="flex items-center gap-4">
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-6">
+          <a href="/" class="text-sm text-slate-300 hover:text-white transition-colors">Beranda</a>
+          <a href="/faq" class="text-sm text-slate-300 hover:text-white transition-colors">FAQ</a>
+          <a href="/check" class="text-sm text-slate-300 hover:text-white transition-colors">Cek Status</a>
+          <% if (currentUser) { %>
+            <% if (currentUser.role==='admin' ) { %>
+              <a href="/admin/dashboard" class="btn btn-primary btn-sm">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+              </a>
+              <% } else { %>
+                <a href="/student/reports" class="btn btn-primary btn-sm">
+                  <i class="fas fa-file-alt"></i> Laporan Saya
+                </a>
+                <% } %>
+                  <% } else { %>
+                    <a href="/login" class="btn btn-secondary btn-sm">Login</a>
+                    <a href="/register" class="btn btn-primary btn-sm">Daftar</a>
+                    <% } %>
+        </div>
+
+        <!-- Tombol ganti tema (tampil di desktop & mobile) -->
+        <%- include('theme-switcher') %>
+
+          <!-- Mobile menu button -->
+          <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')"
+            class="md:hidden text-slate-300 hover:text-white">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+      </div>
+    </div>
+
+    <!-- Mobile Nav -->
+    <div id="mobileMenu" class="hidden md:hidden pb-4 space-y-2">
+      <a href="/"
+        class="block px-3 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/10">Beranda</a>
+      <a href="/faq"
+        class="block px-3 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/10">FAQ</a>
+      <a href="/check" class="block px-3 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/10">Cek
+        Status</a>
+      <% if (currentUser) { %>
+        <% if (currentUser.role==='admin' ) { %>
+          <a href="/admin/dashboard"
+            class="block px-3 py-2 text-sm text-indigo-400 font-semibold rounded-lg hover:bg-white/10">Dashboard</a>
+          <% } else { %>
+            <a href="/student/reports"
+              class="block px-3 py-2 text-sm text-indigo-400 font-semibold rounded-lg hover:bg-white/10">Laporan
+              Saya</a>
+            <% } %>
+              <% } else { %>
+                <a href="/login"
+                  class="block px-3 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/10">Login</a>
+                <a href="/register"
+                  class="block px-3 py-2 text-sm text-indigo-400 font-semibold rounded-lg hover:bg-white/10">Daftar</a>
+                <% } %>
+    </div>
+  </div>
+</nav>

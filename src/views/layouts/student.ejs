@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <%- include('../partials/head') %>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+      <%= typeof title !=='undefined' ? title : 'Dashboard Mahasiswa' %>
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <%- include('../partials/head') %>
+</head>
+
+<body class="antialiased">
+  <!-- Navbar student -->
+  <nav class="border-b border-white/10 bg-white/5 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="/student/reports" class="flex items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+            <i class="fas fa-bullhorn text-white text-sm"></i>
+          </div>
+          <span class="text-lg font-bold text-white">Lapor<span class="text-indigo-400">Mahasiswa</span></span>
+        </a>
+        <div class="flex items-center gap-4">
+          <a href="/student/reports"
+            class="text-sm text-slate-300 hover:text-white transition-colors <%= currentPath.startsWith('/student/reports') ? 'text-indigo-400 font-semibold' : '' %>">
+            <i class="fas fa-file-alt mr-1"></i> Laporan
+          </a>
+          <a href="/student/reports/new" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Buat Laporan
+          </a>
+          <%- include('../partials/theme-switcher') %>
+            <div class="relative" id="studentAccountDropdown">
+              <button id="studentAccountButton" type="button" aria-haspopup="true" aria-expanded="false"
+                aria-controls="studentAccountMenu"
+                class="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors">
+                <div class="w-8 h-8 rounded-full bg-indigo-600/40 flex items-center justify-center">
+                  <i class="fas fa-user text-indigo-300 text-xs"></i>
+                </div>
+                <span class="hidden sm:inline">
+                  <%= currentUser ? currentUser.name : '' %>
+                </span>
+                <i class="fas fa-chevron-down text-xs"></i>
+              </button>
+              <div id="studentAccountMenu"
+                class="absolute right-0 top-full mt-2 w-48 glass-card p-2 hidden z-50 animate-slideDown">
+                <a href="/student/profile"
+                  class="flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                  <i class="fas fa-user-cog"></i> Profil Saya
+                </a>
+                <form action="/logout" method="POST">
+                  <button type="submit"
+                    class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                  </button>
+                </form>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="min-h-[calc(100vh-64px)]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <%- include('../partials/flash') %>
+        <%- body %>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var dropdown = document.getElementById('studentAccountDropdown');
+      var button = document.getElementById('studentAccountButton');
+      var menu = document.getElementById('studentAccountMenu');
+
+      if (!dropdown || !button || !menu) return;
+
+      function setMenuOpen(isOpen) {
+        menu.classList.toggle('hidden', !isOpen);
+        button.setAttribute('aria-expanded', String(isOpen));
+      }
+
+      button.addEventListener('click', function (event) {
+        event.stopPropagation();
+        setMenuOpen(menu.classList.contains('hidden'));
+      });
+
+      document.addEventListener('click', function (event) {
+        if (!dropdown.contains(event.target)) setMenuOpen(false);
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
+          setMenuOpen(false);
+          button.focus();
+        }
+      });
+    })();
+  </script>
+  <script src="/js/theme.js"></script>
+</body>
+
+</html>

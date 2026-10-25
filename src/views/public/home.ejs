@@ -1,0 +1,118 @@
+<!-- Hero Section -->
+<section class="relative py-16 md:py-24 animate-fadeIn">
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-40 -right-40 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl"></div>
+  </div>
+  <div class="relative text-center max-w-3xl mx-auto">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-6">
+      <i class="fas fa-shield-alt"></i>
+      Sistem Pengaduan Mahasiswa
+    </div>
+    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
+      Suaramu <span class="gradient-text">Penting</span>,<br>
+      Laporkan Sekarang
+    </h1>
+    <p class="text-lg text-slate-400 max-w-xl mx-auto mb-10">
+      Sampaikan keluhan, laporan, atau masalah yang kamu alami di kampus secara aman, rahasia, dan transparan.
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <% if (currentUser) { %>
+        <a href="/student/reports/new" class="btn btn-primary text-base px-8 py-3 animate-pulse-glow">
+          <i class="fas fa-pen-alt"></i> Buat Laporan
+        </a>
+      <% } else { %>
+        <a href="/register" class="btn btn-primary text-base px-8 py-3 animate-pulse-glow">
+          <i class="fas fa-user-plus"></i> Daftar Sekarang
+        </a>
+        <a href="/login" class="btn btn-secondary text-base px-8 py-3">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+      <% } %>
+      <a href="/check" class="btn btn-secondary text-base px-8 py-3">
+        <i class="fas fa-search"></i> Cek Status Laporan
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="py-16">
+  <div class="text-center mb-12">
+    <h2 class="text-2xl md:text-3xl font-bold text-white mb-3">Bagaimana Cara Kerjanya?</h2>
+    <p class="text-slate-400">Tiga langkah mudah untuk menyampaikan laporan</p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="glass-card text-center group hover:border-indigo-500/30 transition-all duration-300" style="animation-delay: 0.1s">
+      <div class="w-14 h-14 rounded-2xl bg-indigo-600/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-indigo-600/30 transition-colors">
+        <i class="fas fa-user-plus text-xl text-indigo-400"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-white mb-2">1. Daftar Akun</h3>
+      <p class="text-sm text-slate-400">Daftar menggunakan email dan NIM kamu. Proses cepat dan mudah.</p>
+    </div>
+    <div class="glass-card text-center group hover:border-purple-500/30 transition-all duration-300" style="animation-delay: 0.2s">
+      <div class="w-14 h-14 rounded-2xl bg-purple-600/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-600/30 transition-colors">
+        <i class="fas fa-pen-alt text-xl text-purple-400"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-white mb-2">2. Tulis Laporan</h3>
+      <p class="text-sm text-slate-400">Pilih kategori, deskripsikan masalah, dan lampirkan bukti pendukung.</p>
+    </div>
+    <div class="glass-card text-center group hover:border-emerald-500/30 transition-all duration-300" style="animation-delay: 0.3s">
+      <div class="w-14 h-14 rounded-2xl bg-emerald-600/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-600/30 transition-colors">
+        <i class="fas fa-tasks text-xl text-emerald-400"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-white mb-2">3. Pantau Progress</h3>
+      <p class="text-sm text-slate-400">Lacak status laporan secara real-time hingga selesai ditangani.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Categories -->
+<% if (categories && categories.length > 0) { %>
+<section class="py-16">
+  <div class="text-center mb-12">
+    <h2 class="text-2xl md:text-3xl font-bold text-white mb-3">Kategori Laporan</h2>
+    <p class="text-slate-400">Pilih kategori yang sesuai dengan laporan kamu</p>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <% categories.forEach(function(cat) { %>
+      <a href="/category/<%= cat.slug %>" class="glass-card-light hover:border-indigo-500/30 transition-all duration-300 group">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600/20 flex items-center justify-center group-hover:bg-indigo-600/30 transition-colors flex-shrink-0">
+            <i class="fas fa-folder text-indigo-400"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-white group-hover:text-indigo-300 transition-colors"><%= cat.name %></h3>
+          </div>
+        </div>
+      </a>
+    <% }); %>
+  </div>
+</section>
+<% } %>
+
+<!-- FAQ Preview -->
+<% if (faqs && faqs.length > 0) { %>
+<section class="py-16">
+  <div class="text-center mb-12">
+    <h2 class="text-2xl md:text-3xl font-bold text-white mb-3">Pertanyaan Umum</h2>
+    <p class="text-slate-400">Jawaban atas pertanyaan yang sering diajukan</p>
+  </div>
+  <div class="max-w-2xl mx-auto space-y-3">
+    <% faqs.forEach(function(faq) { %>
+      <details class="faq-item glass-card-light">
+        <summary>
+          <span><%= faq.question %></span>
+          <i class="fas fa-chevron-down text-xs text-slate-400 transition-transform"></i>
+        </summary>
+        <div class="faq-answer"><%= faq.answer %></div>
+      </details>
+    <% }); %>
+  </div>
+  <div class="text-center mt-8">
+    <a href="/faq" class="btn btn-secondary">
+      Lihat Semua FAQ <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+</section>
+<% } %>

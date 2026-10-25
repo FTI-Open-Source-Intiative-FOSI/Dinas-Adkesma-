@@ -1,0 +1,32 @@
+<div class="max-w-2xl mx-auto py-8 animate-fadeIn">
+  <h1 class="text-2xl font-bold text-white mb-2">Kategori: <%= category.name %></h1>
+  <% if (category.description) { %>
+    <p class="text-slate-400 mb-8"><%= category.description %></p>
+  <% } %>
+
+  <div class="glass-card text-center py-12">
+    <div class="w-16 h-16 rounded-2xl bg-indigo-600/20 flex items-center justify-center mx-auto mb-4">
+      <i class="fas fa-pen-alt text-2xl text-indigo-400"></i>
+    </div>
+    <h2 class="text-lg font-semibold text-white mb-2">Ingin Membuat Laporan?</h2>
+    <p class="text-sm text-slate-400 mb-6">
+      Masuk ke akun kamu dan buat laporan di kategori ini.
+    </p>
+    <% if (currentUser) { %>
+      <a href="/student/reports/new" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Buat Laporan Baru
+      </a>
+    <% } else { %>
+      <div class="flex justify-center gap-3">
+        <a href="/login" class="btn btn-secondary">Login</a>
+        <a href="/register" class="btn btn-primary">Daftar</a>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="mt-6">
+    <a href="/" class="text-sm text-slate-400 hover:text-white transition-colors">
+      <i class="fas fa-arrow-left mr-1"></i> Kembali ke Beranda
+    </a>
+  </div>
+</div>
