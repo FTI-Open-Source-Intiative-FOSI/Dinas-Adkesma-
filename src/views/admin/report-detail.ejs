@@ -1,3 +1,4 @@
+<% const isClosed = report.status === 'selesai' || report.status === 'ditolak'; %>
 <div class="max-w-4xl mx-auto animate-fadeIn">
   <div class="mb-6">
     <a href="/admin/reports" class="text-sm text-slate-400 hover:text-white transition-colors">
@@ -108,13 +109,15 @@
 
         <!-- Add response -->
         <form method="POST" action="/admin/reports/<%= report.id %>/responses" class="space-y-3 border-t border-white/10 pt-4">
-          <textarea name="message" class="form-input" rows="3" placeholder="Tulis tanggapan..." required></textarea>
+          <textarea name="message" class="form-input" rows="3"
+            placeholder="<%= isClosed ? 'Laporan telah ' + report.status + ', tanggapan ditutup.' : 'Tulis tanggapan...' %>"
+            <%= isClosed ? 'disabled' : 'required' %>></textarea>
           <div class="flex items-center justify-between">
-            <label class="flex items-center gap-2 text-sm text-slate-400">
-              <input type="checkbox" name="is_internal" class="accent-amber-500 w-4 h-4 rounded">
+            <label class="flex items-center gap-2 text-sm text-slate-400 <%= isClosed ? 'opacity-50 cursor-not-allowed' : '' %>">
+              <input type="checkbox" name="is_internal" class="accent-amber-500 w-4 h-4 rounded" <%= isClosed ? 'disabled' : '' %>>
               <i class="fas fa-lock text-xs"></i> Catatan internal (tidak terlihat pelapor)
             </label>
-            <button type="submit" class="btn btn-primary btn-sm">
+            <button type="submit" class="btn btn-primary btn-sm" <%= isClosed ? 'disabled' : '' %>>
               <i class="fas fa-paper-plane"></i> Kirim
             </button>
           </div>
@@ -128,17 +131,22 @@
       <div class="glass-card">
         <h2 class="text-base font-semibold text-white mb-4"><i class="fas fa-exchange-alt mr-2 text-slate-400"></i> Ubah Status</h2>
         <form method="POST" action="/admin/reports/<%= report.id %>/status" class="space-y-3">
-          <select name="new_status" class="form-select" required>
+          <select name="new_status" class="form-select" <%= isClosed ? 'disabled' : 'required' %>>
             <% statuses.forEach(function(s) { %>
               <option value="<%= s %>" <%= report.status === s ? 'selected' : '' %>>
                 <%= s.charAt(0).toUpperCase() + s.slice(1) %>
               </option>
             <% }); %>
           </select>
-          <input type="text" name="note" class="form-input" placeholder="Catatan (opsional)">
-          <button type="submit" class="btn btn-primary w-full">
+          <input type="text" name="note" class="form-input" placeholder="Catatan (opsional)" <%= isClosed ? 'disabled' : '' %>>
+          <button type="submit" class="btn btn-primary w-full" <%= isClosed ? 'disabled' : '' %>>
             <i class="fas fa-save"></i> Update Status
           </button>
+          <% if (isClosed) { %>
+            <p class="text-xs text-slate-500 text-center pt-1">
+              <i class="fas fa-lock mr-1"></i> Laporan berstatus <strong><%= report.status %></strong> tidak dapat diubah lagi.
+            </p>
+          <% } %>
         </form>
       </div>
 

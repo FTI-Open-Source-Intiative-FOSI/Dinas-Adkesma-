@@ -7,32 +7,55 @@ const { setFlash }  = require('../utils/flash');
 
 const SALT_ROUNDS = 12;
 
+function renderLoginError(res, message, email = '') {
+  res.locals.flashMessages = [{ type: 'error', message }];
+  return res.status(400).render('auth/login', {
+    title: 'Login',
+    layout: 'layouts/main',
+    old: { email },
+  });
+}
+
+function renderRegisterError(res, message, old = {}) {
+  res.locals.flashMessages = [{ type: 'error', message }];
+  return res.status(400).render('auth/register', {
+    title: 'Daftar Akun',
+    layout: 'layouts/main',
+    old,
+  });
+}
+
 const AuthController = {
   /* ─────────────── GET /login ─────────────── */
   showLogin(req, res) {
-    res.render('auth/login', { title: 'Login', layout: 'layouts/main' });
+    res.render('auth/login', {
+      title: 'Login',
+      layout: 'layouts/main',
+      old: { email: req.query.email || '' },
+    });
   },
 
   /* ─────────────── POST /login ─────────────── */
   async processLogin(req, res) {
-    const errors = validationResult(req);
+    const rawEmail = String(req.body.email || '').trim();
+    const errors   = validationResult(req);
     if (!errors.isEmpty()) {
-      setFlash(req, 'error', errors.array()[0].msg);
-      return res.redirect('/login');
+      return renderLoginError(res, errors.array()[0].msg, rawEmail);
     }
     try {
       const { email, password } = req.body;
       const user = await UserModel.findByEmail(email);
-      if (!user || !user.is_active) {
-        setFlash(req, 'error', 'Email atau password salah.');
-        return res.redirect('/login');
+      if (!user) {
+        return renderLoginError(res, 'Email belum terdaftar atau salah.', rawEmail);
       }
-      const match = await bcrypt.compare(password, user.password_hash);
+      let match = await bcrypt.compare(password, user.password_hash);
+      if (!match && typeof password === 'string' && password.trim() !== password) {
+        match = await bcrypt.compare(password.trim(), user.password_hash);
+      }
       if (!match) {
-        setFlash(req, 'error', 'Email atau password salah.');
-        return res.redirect('/login');
+        return renderLoginError(res, 'Password yang kamu masukkan salah.', rawEmail);
       }
-      // Simpan sesi
+      // Simpan sesi lalu pastikan tersimpan ke MySQL sebelum redirect
       req.session.user = {
         id:    user.id,
         name:  user.name,
@@ -41,25 +64,28 @@ const AuthController = {
         nim:   user.nim,
       };
       setFlash(req, 'success', `Selamat datang, ${user.name}!`);
-      return res.redirect(user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
+      const target = user.role === 'admin' ? '/admin/dashboard' : '/student/reports';
+      return req.session.save(() => res.redirect(target));
     } catch (err) {
       console.error('[AuthController.processLogin]', err);
-      setFlash(req, 'error', 'Terjadi kesalahan server. Coba lagi.');
-      return res.redirect('/login');
+      return renderLoginError(res, 'Terjadi kesalahan server. Coba lagi.', rawEmail);
     }
   },
 
   /* ─────────────── GET /register ─────────────── */
   showRegister(req, res) {
-    res.render('auth/register', { title: 'Daftar Akun', layout: 'layouts/main' });
+    res.render('auth/register', {
+      title: 'Daftar Akun',
+      layout: 'layouts/main',
+      old: {},
+    });
   },
 
   /* ─────────────── POST /register ─────────────── */
   async processRegister(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      setFlash(req, 'error', errors.array()[0].msg);
-      return res.redirect('/register');
+      return renderRegisterError(res, errors.array()[0].msg, req.body);
     }
     try {
       const { name, nim, email, password, prodi, phone } = req.body;
@@ -67,15 +93,13 @@ const AuthController = {
       // Cek duplikat email
       const existingEmail = await UserModel.findByEmail(email);
       if (existingEmail) {
-        setFlash(req, 'error', 'Email sudah terdaftar.');
-        return res.redirect('/register');
+        return renderRegisterError(res, 'Email sudah terdaftar.', req.body);
       }
       // Cek duplikat NIM (jika diisi)
       if (nim) {
         const existingNim = await UserModel.findByNim(nim);
         if (existingNim) {
-          setFlash(req, 'error', 'NIM sudah terdaftar.');
-          return res.redirect('/register');
+          return renderRegisterError(res, 'NIM sudah terdaftar.', req.body);
         }
       }
 
@@ -83,11 +107,10 @@ const AuthController = {
       await UserModel.create({ nim, name, email, password_hash, role: 'mahasiswa', prodi, phone });
 
       setFlash(req, 'success', 'Akun berhasil dibuat. Silakan login.');
-      return res.redirect('/login');
+      return req.session.save(() => res.redirect(`/login?email=${encodeURIComponent(email)}`));
     } catch (err) {
       console.error('[AuthController.processRegister]', err);
-      setFlash(req, 'error', 'Terjadi kesalahan server. Coba lagi.');
-      return res.redirect('/register');
+      return renderRegisterError(res, 'Terjadi kesalahan server. Coba lagi.', req.body);
     }
   },
 

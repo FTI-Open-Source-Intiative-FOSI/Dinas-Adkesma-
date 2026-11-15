@@ -9,7 +9,7 @@ const methodOverride = require('method-override');
 const expressLayouts = require('express-ejs-layouts');
 const rateLimit      = require('express-rate-limit');
 const pool           = require('./config/db');
-const { getFlash }   = require('./utils/flash');
+const { setFlash, getFlash } = require('./utils/flash');
 const routes         = require('./routes/index');
 
 const app = express();
@@ -47,14 +47,19 @@ app.use(session({
   },
 }));
 
-/* ── Rate limiter (auth routes) ── */
+/* ── Rate limiter (hanya POST login/register & hanya percobaan gagal) ── */
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
-  message: 'Terlalu banyak percobaan. Coba lagi nanti.',
+  max: 50,
+  skipSuccessfulRequests: true,
+  requestWasSuccessful: (req) => Boolean(req.session && req.session.user),
+  handler: (req, res) => {
+    setFlash(req, 'error', 'Terlalu banyak percobaan gagal. Silakan coba lagi nanti.');
+    return res.redirect(req.path || '/login');
+  },
 });
-app.use('/login', authLimiter);
-app.use('/register', authLimiter);
+app.post('/login', authLimiter);
+app.post('/register', authLimiter);
 
 /* ── View engine (EJS + layouts) ── */
 app.set('view engine', 'ejs');
@@ -67,8 +72,17 @@ app.set('layout extractStyles', true);
 /* ── Global locals (available in every EJS template) ── */
 app.use((req, res, next) => {
   res.locals.currentUser = req.session.user || null;
-  res.locals.flashMessages = getFlash(req);
   res.locals.currentPath = req.path;
+  res.locals.flashMessages = [];
+
+  // Ambil flash message hanya saat halaman benar-benar di-render (bukan saat redirect)
+  const origRender = res.render;
+  res.render = function (view, options, callback) {
+    if (!res.locals.flashMessages || res.locals.flashMessages.length === 0) {
+      res.locals.flashMessages = getFlash(req);
+    }
+    return origRender.call(this, view, options, callback);
+  };
   next();
 });
 

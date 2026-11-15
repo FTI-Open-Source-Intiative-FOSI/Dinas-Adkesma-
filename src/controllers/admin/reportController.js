@@ -43,6 +43,10 @@ const AdminReportController = {
     const id         = parseInt(req.params.id, 10);
     const report     = await ReportModel.findByIdWithDetails(id);
     if (!report) { setFlash(req, 'error', 'Laporan tidak ditemukan.'); return res.redirect('/admin/reports'); }
+    if (report.status === 'selesai' || report.status === 'ditolak') {
+      setFlash(req, 'error', `Laporan sudah berstatus ${report.status} dan tidak dapat diubah lagi.`);
+      return res.redirect(`/admin/reports/${id}`);
+    }
     const { new_status, note } = req.body;
     if (!STATUSES.includes(new_status)) { setFlash(req, 'error', 'Status tidak valid.'); return res.redirect(`/admin/reports/${id}`); }
     await ReportModel.updateStatus(id, new_status, req.session.user.id, report.status, note || null);
@@ -53,6 +57,12 @@ const AdminReportController = {
   /* POST /admin/reports/:id/responses */
   async addResponse(req, res) {
     const id      = parseInt(req.params.id, 10);
+    const report  = await ReportModel.findByIdWithDetails(id);
+    if (!report) { setFlash(req, 'error', 'Laporan tidak ditemukan.'); return res.redirect('/admin/reports'); }
+    if (report.status === 'selesai' || report.status === 'ditolak') {
+      setFlash(req, 'error', `Laporan sudah berstatus ${report.status}, tidak dapat menambah tanggapan.`);
+      return res.redirect(`/admin/reports/${id}`);
+    }
     const { message } = req.body;
     const is_internal = req.body.is_internal === 'on' ? 1 : 0;
     if (!message || !message.trim()) {

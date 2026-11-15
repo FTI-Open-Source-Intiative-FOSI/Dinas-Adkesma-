@@ -15,12 +15,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/output.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-      body {
-        background: linear-gradient(135deg, #0f0e1a 0%, #1a1333 50%, #0f172a 100%);
-        min-height: 100vh;
-      }
-    </style>
 </head>
 
 <body class="antialiased">
@@ -34,6 +28,7 @@
     </main>
 
     <%- include('../partials/footer') %>
+    <%- typeof script !== 'undefined' ? script : '' %>
 </body>
 
 </html>

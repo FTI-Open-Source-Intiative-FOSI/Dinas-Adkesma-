@@ -51,7 +51,11 @@ const ReportModel = {
   /** Detail laporan + respons admin */
   async findByIdWithDetails(id) {
     const [reports] = await db.execute(
-      `SELECT r.*, c.name AS category_name, u.name AS reporter_name, u.nim
+      // Identitas pelapor anonim disembunyikan di level query, bukan hanya di view,
+      // supaya nama/NIM aslinya tidak pernah sampai ke template admin.
+      `SELECT r.*, c.name AS category_name,
+              CASE WHEN r.is_anonymous = 1 THEN '(Anonim)' ELSE u.name END AS reporter_name,
+              CASE WHEN r.is_anonymous = 1 THEN NULL      ELSE u.nim  END AS nim
        FROM reports r
        JOIN categories c ON c.id = r.category_id
        JOIN users u      ON u.id = r.user_id
@@ -95,7 +99,9 @@ const ReportModel = {
                        params.push(`%${search}%`, `%${search}%`); }
     const where = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
     const [rows] = await db.execute(
-      `SELECT r.*, c.name AS category_name, u.name AS reporter_name
+      // Nama pelapor anonim disamarkan di sini (dipakai daftar laporan & dashboard admin).
+      `SELECT r.*, c.name AS category_name,
+              CASE WHEN r.is_anonymous = 1 THEN '(Anonim)' ELSE u.name END AS reporter_name
        FROM reports r
        JOIN categories c ON c.id = r.category_id
        JOIN users u      ON u.id = r.user_id

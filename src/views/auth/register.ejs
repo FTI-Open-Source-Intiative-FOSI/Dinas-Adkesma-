@@ -13,26 +13,31 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="sm:col-span-2">
           <label for="name" class="form-label">Nama Lengkap <span class="text-red-400">*</span></label>
-          <input type="text" id="name" name="name" class="form-input" placeholder="Nama lengkap kamu" required>
+          <input type="text" id="name" name="name" class="form-input" placeholder="Nama lengkap kamu"
+            value="<%= typeof old !== 'undefined' && old.name ? old.name : '' %>" required>
         </div>
         <div>
           <label for="nim" class="form-label">NIM</label>
-          <input type="text" id="nim" name="nim" class="form-input" placeholder="Nomor Induk Mahasiswa">
+          <input type="text" id="nim" name="nim" class="form-input" placeholder="Nomor Induk Mahasiswa"
+            value="<%= typeof old !== 'undefined' && old.nim ? old.nim : '' %>">
         </div>
         <div>
           <label for="prodi" class="form-label">Program Studi</label>
-          <input type="text" id="prodi" name="prodi" class="form-input" placeholder="Contoh: Teknik Informatika">
+          <input type="text" id="prodi" name="prodi" class="form-input" placeholder="Contoh: Teknik Informatika"
+            value="<%= typeof old !== 'undefined' && old.prodi ? old.prodi : '' %>">
         </div>
       </div>
 
       <div>
         <label for="email" class="form-label">Email <span class="text-red-400">*</span></label>
-        <input type="email" id="email" name="email" class="form-input" placeholder="nama@email.com" required>
+        <input type="email" id="email" name="email" class="form-input" placeholder="nama@email.com"
+          value="<%= typeof old !== 'undefined' && old.email ? old.email : '' %>" required>
       </div>
 
       <div>
         <label for="phone" class="form-label">Nomor Telepon</label>
-        <input type="tel" id="phone" name="phone" class="form-input" placeholder="08xxxxxxxxxx">
+        <input type="tel" id="phone" name="phone" class="form-input" placeholder="08xxxxxxxxxx"
+          value="<%= typeof old !== 'undefined' && old.phone ? old.phone : '' %>">
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -40,7 +45,7 @@
           <label for="password" class="form-label">Password <span class="text-red-400">*</span></label>
           <input type="password" id="password" name="password" class="form-input" placeholder="Minimal 8 karakter"
             autocomplete="new-password" required>
-          <p class="text-xs text-slate-500 mt-1">Harus ada huruf kapital & angka</p>
+          <p class="text-xs text-slate-500 mt-1">Minimal 8 karakter</p>
         </div>
         <div>
           <label for="password_confirm" class="form-label">Konfirmasi Password <span
@@ -56,3 +61,5 @@
     </form>
   </div>
 </div>
+
+<script src="/js/password-toggle.js"></script>

@@ -38,7 +38,6 @@ router.post('/faqs/:id/edit',    faqRules, FaqController.update);
 router.post('/faqs/:id/delete',  FaqController.destroy);
 
 /* ── Pengguna ── */
-router.get('/users',                    UserController.list);
-router.post('/users/:id/toggle-active', UserController.toggleActive);
+router.get('/users', UserController.list);
 
 module.exports = router;

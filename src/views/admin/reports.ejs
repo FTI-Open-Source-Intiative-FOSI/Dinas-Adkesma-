@@ -1,18 +1,12 @@
-
 <div class="animate-fadeIn">
 
   <!-- Filters -->
   <div class="glass-card mb-6">
-    <form method="GET" action="/admin/reports"
-          class="flex flex-wrap gap-3 items-end">
+    <form method="GET" action="/admin/reports" class="flex flex-wrap gap-3 items-end">
 
       <div class="flex-1 min-w-[200px]">
         <label class="form-label">Cari</label>
-        <input
-          type="text"
-          name="search"
-          class="form-input"
-          placeholder="Judul atau kode tiket..."
+        <input type="text" name="search" class="form-input" placeholder="Judul atau kode tiket..."
           value="<%= filters.search %>">
       </div>
 
@@ -22,12 +16,10 @@
           <option value="">Semua</option>
 
           <% statuses.forEach(function(s) { %>
-            <option
-              value="<%= s %>"
-              <%= filters.status === s ? 'selected' : '' %>>
+            <option value="<%= s %>" <%=filters.status===s ? 'selected' : '' %>>
               <%= s.charAt(0).toUpperCase() + s.slice(1) %>
             </option>
-          <% }); %>
+            <% }); %>
         </select>
       </div>
 
@@ -37,12 +29,10 @@
           <option value="">Semua</option>
 
           <% categories.forEach(function(cat) { %>
-            <option
-              value="<%= cat.id %>"
-              <%= String(filters.category_id) === String(cat.id) ? 'selected' : '' %>>
+            <option value="<%= cat.id %>" <%=String(filters.category_id)===String(cat.id) ? 'selected' : '' %>>
               <%= cat.name %>
             </option>
-          <% }); %>
+            <% }); %>
         </select>
       </div>
 
@@ -70,7 +60,7 @@
       </h2>
     </div>
 
-    <% if (reports && reports.length > 0) { %>
+    <% if (reports && reports.length> 0) { %>
 
       <div class="overflow-x-auto">
         <table class="data-table">
@@ -114,11 +104,8 @@
                 </td>
 
                 <td class="text-xs whitespace-nowrap">
-                  <%= new Date(r.created_at).toLocaleDateString('id-ID', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric'
-                  }) %>
+                  <%= new Date(r.created_at).toLocaleDateString('id-ID', { day: 'numeric' , month: 'short' ,
+                    year: 'numeric' }) %>
                 </td>
 
                 <!-- Action Buttons -->
@@ -126,39 +113,17 @@
                   <div class="flex flex-wrap items-center justify-center gap-2">
 
                     <!-- Detail Button -->
-                    <a
-                      href="/admin/reports/<%= r.id %>"
-                      class="inline-flex items-center justify-center gap-2
-                             px-4 py-2 rounded-xl
-                             border border-slate-500/60
-                             bg-slate-500/20 text-white font-semibold
-                             whitespace-nowrap
-                             hover:bg-slate-500/40
-                             transition duration-200">
-
+                    <a href="/admin/reports/<%= r.id %>" class="btn btn-secondary btn-sm whitespace-nowrap">
                       <i class="fas fa-eye"></i>
                       <span>Detail</span>
                     </a>
 
                     <!-- Delete Button -->
-                    <form
-                      method="POST"
-                      action="/admin/reports/<%= r.id %>/delete"
-                      class="inline-flex"
-                      onsubmit="return confirm(
+                    <form method="POST" action="/admin/reports/<%= r.id %>/delete" class="inline-flex" onsubmit="return confirm(
                         'Yakin ingin menghapus laporan ini? Data laporan dan riwayat terkait juga akan dihapus.'
                       );">
 
-                      <button
-                        type="submit"
-                        class="inline-flex items-center justify-center gap-2
-                               px-4 py-2 rounded-xl
-                               border border-red-500/40
-                               bg-red-600 text-white font-semibold
-                               whitespace-nowrap
-                               hover:bg-red-700
-                               transition duration-200">
-
+                      <button type="submit" class="btn btn-danger btn-sm whitespace-nowrap">
                         <i class="fas fa-trash-alt"></i>
                         <span>Hapus Data</span>
                       </button>
@@ -169,69 +134,69 @@
                 </td>
 
               </tr>
-            <% }); %>
+              <% }); %>
           </tbody>
 
         </table>
       </div>
 
       <!-- Pagination -->
-      <% if (totalPages > 1) { %>
+      <% if (totalPages> 1) { %>
         <div class="flex justify-center mt-6">
           <div class="pagination">
 
-            <% if (page > 1) { %>
+            <% if (page> 1) { %>
               <a href="/admin/reports?<%= new URLSearchParams({
                 page: String(page - 1),
                 status: filters.status || '',
                 category_id: filters.category_id || '',
                 search: filters.search || ''
-              }).toString() %>"
-                 aria-label="Halaman sebelumnya">
+              }).toString() %>" aria-label="Halaman sebelumnya">
                 <i class="fas fa-chevron-left"></i>
               </a>
-            <% } %>
+              <% } %>
 
-            <% for (let i = 1; i <= totalPages; i++) { %>
+                <% for (let i=1; i <=totalPages; i++) { %>
 
-              <% if (i === page) { %>
-                <span class="active"><%= i %></span>
-              <% } else { %>
-                <a href="/admin/reports?<%= new URLSearchParams({
+                  <% if (i===page) { %>
+                    <span class="active">
+                      <%= i %>
+                    </span>
+                    <% } else { %>
+                      <a href="/admin/reports?<%= new URLSearchParams({
                   page: String(i),
                   status: filters.status || '',
                   category_id: filters.category_id || '',
                   search: filters.search || ''
                 }).toString() %>">
-                  <%= i %>
-                </a>
-              <% } %>
+                        <%= i %>
+                      </a>
+                      <% } %>
 
-            <% } %>
+                        <% } %>
 
-            <% if (page < totalPages) { %>
-              <a href="/admin/reports?<%= new URLSearchParams({
+                          <% if (page < totalPages) { %>
+                            <a href="/admin/reports?<%= new URLSearchParams({
                 page: String(page + 1),
                 status: filters.status || '',
                 category_id: filters.category_id || '',
                 search: filters.search || ''
-              }).toString() %>"
-                 aria-label="Halaman berikutnya">
-                <i class="fas fa-chevron-right"></i>
-              </a>
-            <% } %>
+              }).toString() %>" aria-label="Halaman berikutnya">
+                              <i class="fas fa-chevron-right"></i>
+                            </a>
+                            <% } %>
 
           </div>
         </div>
-      <% } %>
+        <% } %>
 
-    <% } else { %>
+          <% } else { %>
 
-      <p class="text-sm text-slate-400 text-center py-8">
-        Tidak ada laporan yang ditemukan.
-      </p>
+            <p class="text-sm text-slate-400 text-center py-8">
+              Tidak ada laporan yang ditemukan.
+            </p>
 
-    <% } %>
+            <% } %>
 
   </div>
 </div>

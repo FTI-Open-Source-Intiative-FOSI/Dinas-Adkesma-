@@ -8,9 +8,7 @@ const registerRules = [
   body('nim').trim().optional({ checkFalsy: true }).isLength({ max: 20 }).withMessage('NIM maksimal 20 karakter.'),
   body('email').trim().isEmail().withMessage('Format email tidak valid.').normalizeEmail(),
   body('password')
-    .isLength({ min: 8 }).withMessage('Password minimal 8 karakter.')
-    .matches(/[A-Z]/).withMessage('Password harus mengandung huruf kapital.')
-    .matches(/[0-9]/).withMessage('Password harus mengandung angka.'),
+    .isLength({ min: 8 }).withMessage('Password minimal 8 karakter.'),
   body('password_confirm').custom((val, { req }) => {
     if (val !== req.body.password) throw new Error('Konfirmasi password tidak cocok.');
     return true;

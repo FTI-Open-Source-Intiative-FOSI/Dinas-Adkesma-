@@ -1,4 +1,7 @@
 (function () {
+    if (window.__laporThemeInit) return;
+    window.__laporThemeInit = true;
+
     var KEY = 'lapor_theme';
     var root = document.documentElement;
 
