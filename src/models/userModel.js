@@ -4,22 +4,28 @@ const db        = require('../config/db');
 const validator = require('validator');
 
 const UserModel = {
-  /** Cari user berdasarkan email (mendukung pencocokan persis maupun hasil normalizeEmail lama) */
+  /** Cari user berdasarkan email (mendukung pencocokan persis, TRIM \r\n, maupun hasil normalizeEmail lama) */
   async findByEmail(email) {
     const raw        = String(email || '').trim().toLowerCase();
     const normalized = validator.normalizeEmail(raw) || raw;
+    const cleanExpr  = "REPLACE(REPLACE(LOWER(TRIM(email)), '\\r', ''), '\\n', '')";
     const [rows] = await db.execute(
-      'SELECT * FROM users WHERE LOWER(email) = ? OR LOWER(email) = ? LIMIT 1',
-      [raw, normalized]
+      `SELECT * FROM users
+       WHERE ${cleanExpr} = ?
+          OR ${cleanExpr} = ?
+          OR REPLACE(${cleanExpr}, '.', '') = REPLACE(?, '.', '')
+       LIMIT 1`,
+      [raw, normalized, raw]
     );
     return rows[0] || null;
   },
 
   /** Cari user berdasarkan NIM */
   async findByNim(nim) {
+    const cleanNim = String(nim || '').trim();
     const [rows] = await db.execute(
-      'SELECT * FROM users WHERE nim = ? LIMIT 1',
-      [nim]
+      "SELECT * FROM users WHERE REPLACE(REPLACE(TRIM(nim), '\\r', ''), '\\n', '') = ? LIMIT 1",
+      [cleanNim]
     );
     return rows[0] || null;
   },
@@ -35,10 +41,19 @@ const UserModel = {
 
   /** Buat user baru */
   async create({ nim, name, email, password_hash, role = 'mahasiswa', prodi, phone }) {
+    const clean = (v) => (v ? String(v).trim() : null);
     const [result] = await db.execute(
       `INSERT INTO users (nim, name, email, password_hash, role, prodi, phone)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [nim || null, name, email, password_hash, role, prodi || null, phone || null]
+      [
+        clean(nim),
+        String(name || '').trim(),
+        String(email || '').trim().toLowerCase(),
+        password_hash,
+        role,
+        clean(prodi),
+        clean(phone),
+      ]
     );
     return result.insertId;
   },

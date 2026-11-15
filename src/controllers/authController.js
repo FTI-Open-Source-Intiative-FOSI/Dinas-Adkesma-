@@ -48,9 +48,27 @@ const AuthController = {
       if (!user) {
         return renderLoginError(res, 'Email belum terdaftar atau salah.', rawEmail);
       }
-      let match = await bcrypt.compare(password, user.password_hash);
-      if (!match && typeof password === 'string' && password.trim() !== password) {
-        match = await bcrypt.compare(password.trim(), user.password_hash);
+      let match = false;
+      const storedHash = String(user.password_hash || '').trim();
+      if (storedHash.startsWith('$2')) {
+        const candidates = [
+          password,
+          typeof password === 'string' ? password.trim() : '',
+          `${password}\r\n`,
+          `${password}\n`,
+        ];
+        for (const cand of candidates) {
+          if (cand && (await bcrypt.compare(cand, storedHash))) {
+            match = true;
+            break;
+          }
+        }
+      } else if (storedHash && (password === storedHash || password.trim() === storedHash)) {
+        // Jika akun ditambahkan manual lewat phpMyAdmin dengan password plain-text,
+        // izinkan login lalu otomatis enkripsi ke bcrypt.
+        match = true;
+        const newHash = await bcrypt.hash(password.trim(), SALT_ROUNDS);
+        await UserModel.updatePassword(user.id, newHash);
       }
       if (!match) {
         return renderLoginError(res, 'Password yang kamu masukkan salah.', rawEmail);

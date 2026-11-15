@@ -1,15 +1,16 @@
 'use strict';
 
-const express       = require('express');
-const router        = express.Router();
+const express        = require('express');
+const router         = express.Router();
 const AuthController = require('../controllers/authController');
-const { isGuest }   = require('../middlewares/auth');
 const { loginRules, registerRules } = require('../middlewares/validators');
 
-router.get('/login',    isGuest, AuthController.showLogin);
-router.post('/login',   isGuest, loginRules, AuthController.processLogin);
-router.get('/register', isGuest, AuthController.showRegister);
-router.post('/register', isGuest, registerRules, AuthController.processRegister);
-router.post('/logout',  AuthController.logout);
+// Tanpa blokir isGuest agar pengguna/admin bisa langsung daftar akun baru
+// atau berganti akun lewat /login & /register meski masih ada sesi aktif di tab lain.
+router.get('/login',     AuthController.showLogin);
+router.post('/login',    loginRules, AuthController.processLogin);
+router.get('/register',  AuthController.showRegister);
+router.post('/register', registerRules, AuthController.processRegister);
+router.post('/logout',   AuthController.logout);
 
 module.exports = router;
