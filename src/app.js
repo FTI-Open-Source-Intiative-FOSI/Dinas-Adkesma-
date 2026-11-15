@@ -14,6 +14,10 @@ const routes         = require('./routes/index');
 
 const app = express();
 
+// Penting untuk deployment di balik reverse proxy (Railway, Render, Nginx, cPanel)
+// agar session cookie secure (HTTPS) dan rate-limiter membaca IP asli pengguna.
+app.set('trust proxy', 1);
+
 /* ── Security ── */
 app.use(helmet({
   contentSecurityPolicy: false,   // Tailwind CDN & inline styles
