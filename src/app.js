@@ -31,9 +31,11 @@ app.use(express.json());
 /* ── Method override (PUT/DELETE via POST) ── */
 app.use(methodOverride('_method'));
 
+const { UPLOAD_DIR } = require('./middlewares/upload');
+
 /* ── Static files ── */
 app.use(express.static(path.join(__dirname, '../public')));
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/uploads', express.static(UPLOAD_DIR));
 
 /* ── Session (MySQL store) ── */
 const sessionStore = new MySQLStore({}, pool);
@@ -46,7 +48,7 @@ app.use(session({
   cookie: {
     maxAge:   1000 * 60 * 60 * 24,  // 1 hari
     httpOnly: true,
-    secure:   process.env.NODE_ENV === 'production',
+    secure:   'auto',
     sameSite: 'lax',
   },
 }));

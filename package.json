@@ -8,7 +8,8 @@
     "dev": "nodemon src/server.js",
     "build": "tailwindcss -i ./public/css/input.css -o ./public/css/output.css --minify",
     "css:build": "tailwindcss -i ./public/css/input.css -o ./public/css/output.css --minify",
-    "css:watch": "tailwindcss -i ./public/css/input.css -o ./public/css/output.css --watch"
+    "css:watch": "tailwindcss -i ./public/css/input.css -o ./public/css/output.css --watch",
+    "db:setup": "node database/setup.js"
   },
   "license": "ISC",
   "dependencies": {
